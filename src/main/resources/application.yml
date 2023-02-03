@@ -3,6 +3,8 @@ spring:
     web-application-type: REACTIVE
   application:
     name: api-gateway
+  security:
+    secretKey: 6WGfy+zHxnaLCSYEtbok2NqyezDDZg0aMMcifl6rNKuSi5/xXMvJCBuiPjiT61iaRoWMzkC16Jv881Zpa5GRJCyRaF1hZzBRU7EDaEDMJpqhXskf8Vi2siskAyV9gzKDdjJEMrCk+qT5JO+EdVOM85jhQm5DNMvjP5O36cZZ+D7Wurh/1c9/5uObrrnN30zBechQ/dcqDz9j5LkojXzlNZJC+WfSyyLElOH6Vw==
 
 server:
   port: 8080
@@ -19,6 +21,7 @@ management:
       enabled: true
 
 spring.cloud.gateway:
+  permitAll: "${PERMIT_ALL_WHITELIST: /actuator/**, /api/demo/account/hello, /api/demo/account/login}"
   httpclient:
     wiretap: false
   httpserver:
@@ -39,11 +42,11 @@ spring.cloud.gateway:
       predicates:
         - Path=/api/demo/account/**
       filters:
-        - RewritePath=/api/demo/account/(?<segment>.*), /api/account/$\{segment}
+        - RewritePath=/api/demo/account(?<segment>/?.*), /api/account$\{segment}
 
 logging:
   level:
-    reactor.netty.http.client: INFO
-    io.netty.handler.codec.http: INFO
-    org.springframework.cloud.gateway: INFO
-    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: INFO
+    reactor.netty.http.client: WARN
+    io.netty.handler.codec.http: WARN
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: TRACE
