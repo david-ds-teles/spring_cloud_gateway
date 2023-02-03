@@ -1,0 +1,49 @@
+spring:
+  main:
+    web-application-type: REACTIVE
+  application:
+    name: api-gateway
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true
+    restart:
+      enabled: true
+
+spring.cloud.gateway:
+  httpclient:
+    wiretap: false
+  httpserver:
+    wiretap: false
+
+  default-filters:
+    - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+
+  globalcors:
+    corsConfigurations:
+      '[/**]':
+        allowed-origins: "*"
+        allowed-methods: "*"
+        allowed-headers: "*"
+  routes:
+    - id: demo-account
+      uri: http://localhost:8090
+      predicates:
+        - Path=/api/demo/account/**
+      filters:
+        - RewritePath=/api/demo/account/(?<segment>.*), /api/account/$\{segment}
+
+logging:
+  level:
+    reactor.netty.http.client: INFO
+    io.netty.handler.codec.http: INFO
+    org.springframework.cloud.gateway: INFO
+    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: INFO
